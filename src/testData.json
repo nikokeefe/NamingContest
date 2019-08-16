@@ -1,0 +1,24 @@
+{
+  "contests": [
+    {
+      "id": 1,
+      "categoryName": "Business/Company",
+      "contestName": "CognitiveBuilding Bricks"
+    },
+    {
+      "id": 2,
+      "categoryName": "Magazine/Newsletter",
+      "contestName": "Educating people about stuff"
+    },
+    {
+      "id": 3,
+      "categoryName": "Software Component",
+      "contestName": "Big Data Analytics for.."
+    },
+    {
+      "id": 4,
+      "categoryName": "Website",
+      "contestName": "Free Programming Books"
+    }
+  ]
+}

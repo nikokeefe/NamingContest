@@ -1,28 +1,31 @@
 module.exports = {
-  parser: "babel-eslint",
   env: {
     browser: true,
-    commonjs: true,
     es6: true,
-    node: true,
-    jest: true
+    node: true
   },
-  extends: ["eslint:recommended", "plugin:react/recommend"],
+  extends: [
+    'standard'
+  ],
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly'
+  },
   parserOptions: {
     ecmaFeatures: {
       jsx: true
     },
-    sourceType: "module"
+    ecmaVersion: 2018,
+    sourceType: 'module'
   },
-  plugins: ["react"],
+  plugins: [
+    'react'
+  ],
   rules: {
-    indent: ["error", 2, { SwitchCase: 1 }],
-    "linebreak-style": ["error", "unix"],
-    quotes: ["error", "single"],
-    semi: ["error", "always"],
-    "no-console": [
-      "warn",
-      { allow: ["clear", "info", "error", "dir", "trace"] }
-    ]
+    indent: ['error', 2, {SwitchCase: 1}],
+    'linebreak-style': ['error', 'unix'],
+    quotes: ['error', 'single'],
+    semi: ['error', 'always'],
+    'no-console': ['warn', {allow: ['clear', 'info', 'error', 'dir', 'trace']}]
   }
 };
