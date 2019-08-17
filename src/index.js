@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import App from './components/App';
 
-ReactDOM.render(<App initialContests={window.initialData.contests}/>,
+ReactDOM.render(
+  <App initialData={window.initialData}/>,
   document.getElementById('root')
 );
