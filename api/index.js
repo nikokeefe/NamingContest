@@ -1,5 +1,5 @@
 import express from 'express';
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectID } from 'mongodb';
 import assert from 'assert';
 import config from '../config';
 
@@ -16,7 +16,6 @@ router.get('/contests', (request, response) => {
   const contests = {};
   mongoDb.collection('contests').find({})
     .project({
-      id: 1,
       categoryName: 1,
       contestName: 1
     })
@@ -28,22 +27,15 @@ router.get('/contests', (request, response) => {
         return;
       }
 
-      contests[contest.id] = contest;
+      contests[contest._id] = contest;
     });
 });
 
-router.get('/contests/:contestId', (request, response) => {
-  mongoDb.collection('contests')
-    .findOne({ id: Number(request.params.contestId) })
-    .then(contest => response.send(contest))
-    .catch(console.error);
-});
-
 router.get('/names/:nameIds', (request, response) => {
-  const nameIds = request.params.nameIds.split(',').map(Number);
+  const nameIds = request.params.nameIds.split(',').map(ObjectID);
   const names = {};
 
-  mongoDb.collection('names').find({ id: { $in: nameIds }})
+  mongoDb.collection('names').find({ _id: { $in: nameIds } })
     .each((error, name) => {
       assert.strict.equal(null, error);
 
@@ -52,7 +44,39 @@ router.get('/names/:nameIds', (request, response) => {
         return;
       }
 
-      names[name.id] = name;
+      names[name._id] = name;
+    });
+});
+
+router.get('/contests/:contestId', (request, response) => {
+  mongoDb.collection('contests')
+    .findOne({ _id: ObjectID(request.params.contestId) })
+    .then(contest => response.send(contest))
+    .catch(error => {
+      console.error(error);
+      response.status(404).send('Bad Request');
+    });
+});
+
+router.post('/names', (request, response) => {
+  const contestId = ObjectID(request.body.contestId);
+  const name = request.body.newName;
+  // Validate inputs here
+
+  mongoDb.collection('names').insertOne({ name })
+    .then(result => mongoDb.collection('contests').findAndModify(
+      { _id: contestId },
+      [],
+      { $push: { nameIds: result.insertedId } },
+      { new: true })
+      .then(doc => response.send({
+        updatedContest: doc.value,
+        newName: { _id: result.insertedId, name }
+      }))
+    )
+    .catch(error => {
+      console.error(error);
+      response.status(404).send('Bad Request');
     });
 });
 

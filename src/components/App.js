@@ -41,10 +41,10 @@ class App extends Component {
 
     api.fetchContest(contestId).then(contest => {
       this.setState({
-        currentContestId: contest.id,
+        currentContestId: contest._id,
         contests: {
           ...this.state.contests,
-          [contest.id]: contest
+          [contest._id]: contest
         }
       });
     });
@@ -75,6 +75,23 @@ class App extends Component {
     });
   }
 
+  addName = (newName, contestId) => {
+    api.addName(newName, contestId)
+      .then(response => 
+        this.setState({
+          contests: {
+            ...this.state.contests,
+            [response.updatedContest._id]: response.updatedContest
+          },
+          names: {
+            ...this.state.names,
+            [response.newName._id]: response.newName
+          }
+        })
+      )
+      .catch(console.error);
+  }
+
   currentContest() {
     return this.state.contests[this.state.currentContestId];
   }
@@ -101,6 +118,7 @@ class App extends Component {
         contestListClick={this.fetchContestList}
         fetchNames={this.fetchNames}
         lookupName={this.lookupName}
+        addName={this.addName}
         {...this.currentContest()} />    
     } 
 

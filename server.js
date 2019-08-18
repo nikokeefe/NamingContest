@@ -1,6 +1,7 @@
 import express from 'express';
 import sassMiddleware from 'node-sass-middleware';
 import path from 'path';
+import bodyParser from 'body-parser';
 
 import serverRender from './serverRender';
 import apiRouter from './api';
@@ -8,6 +9,9 @@ import config from './config';
 
 // Express Setup
 const server = express();
+
+// Body Parser
+server.use(bodyParser.json());
 
 // Sass Middleware
 server.use(sassMiddleware({
@@ -23,7 +27,10 @@ server.get(['/', '/contest/:contestId'], (request, response) => {
     .then(({ initialMarkup, initialData }) => {
       response.render('index', { initialMarkup, initialData });
     })
-    .catch(console.error);
+    .catch(error => {
+      console.error(error);
+      response.status(404).send('Bad Request');
+    });
 });
 
 server.use('/api', apiRouter);
